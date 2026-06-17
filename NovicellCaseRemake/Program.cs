@@ -1,3 +1,5 @@
+using NovicellCaseRemake;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,11 +10,14 @@ builder.Services.AddOpenApi();
 
 var baseUrl = builder.Configuration["ErpSettings:BaseUrl"];
 
+
 builder.Services.AddHttpClient("ERPClient", client =>
 {
     client.BaseAddress = new Uri(baseUrl);
     //client.DefaultRequestHeaders.Add("Accept", "application/vnd.github.v3+json");
 });
+
+builder.Services.AddHostedService<ERPData>();
 
 var app = builder.Build();
 

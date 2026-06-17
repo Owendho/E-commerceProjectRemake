@@ -13,7 +13,7 @@ namespace NovicellCaseRemake
 
         private readonly IHttpClientFactory _httpClientFactory;
 
-
+        
         public ERPData(IHttpClientFactory httpClientFactory, IConfiguration config) 
         {
             _httpClientFactory = httpClientFactory;
@@ -22,33 +22,17 @@ namespace NovicellCaseRemake
 
         protected async override Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            while (cancellationToken.IsCancellationRequested)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 Debug.WriteLine("GetERPProductData: Working behind the scenes...");
+                Console.WriteLine("GetERPProductData: Working behind the scenes...");
+                GetERPProductData();
+                await Task.Delay(5000, cancellationToken);
 
             }
         }
 
-        public async Task backgroundWorker_GetERPData() //gets erp products
-        {
-
-
-            Console.WriteLine("Starting work...");
-
-            var progress = new Progress<int>(percent =>
-            {
-                Console.WriteLine("$progress: {percent}%");
-            });
-
-            await Task.Run(() => GetERPProductData(progress));
-
-
-            //maybe use queue
-            Console.WriteLine("Work completed");
-            
-        }
-
-        public async void GetERPProductData(IProgress<int> progress) 
+        public async void GetERPProductData() 
         {
             var path = _config["ErpSettings:ProductsPath"]; // move this out to program.cs
             var httpClient = _httpClientFactory.CreateClient("ERPClient");
@@ -63,6 +47,6 @@ namespace NovicellCaseRemake
             Console.WriteLine(products);
             //save data to database
         }
-
+        
     }
 }
