@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using NovicellCaseRemake;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,8 +9,11 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
 var baseUrl = builder.Configuration["ErpSettings:BaseUrl"];
 
+builder.Services.AddDbContext<NovicellAppDBContext>(options => options.UseSqlServer(connectionString));
 
 builder.Services.AddHttpClient("ERPClient", client =>
 {
