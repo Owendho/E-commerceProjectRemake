@@ -13,7 +13,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 
 var baseUrl = builder.Configuration["ErpSettings:BaseUrl"];
 
-builder.Services.AddDbContext<NovicellAppDBContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<NovicellAppDBContext>(options => options.UseSqlServer(connectionString)); //dependency injects the database context
 
 builder.Services.AddHttpClient("ERPClient", client =>
 {
