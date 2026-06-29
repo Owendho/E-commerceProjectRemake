@@ -23,7 +23,7 @@ namespace NovicellCaseRemake
             _serviceProvider = serviceProvider;
         }
 
-        protected async override Task ExecuteAsync(CancellationToken cancellationToken)
+        protected async override Task ExecuteAsync(CancellationToken cancellationToken) //how does cancelation token work
         {
             while (!cancellationToken.IsCancellationRequested)
             {

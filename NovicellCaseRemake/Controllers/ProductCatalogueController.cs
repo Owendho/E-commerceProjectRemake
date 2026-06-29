@@ -1,103 +1,101 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NovicellCaseRemake.DTOs;
+using NovicellCaseRemake.Entities;
 using NovicellCaseRemake.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace NovicellCaseRemake.Controllers
 {
+
+    //Is this class a singleton?
     [ApiController]
     [Route("[controller]")]
-    public class ProductCatalogueController : Controller, IProductCatalogueController //do i need view support. Make interface for the require methods
+    public class ProductCatalogueController : ControllerBase, IProductCatalogueController //do i need view support. Make interface for the require methods
     {
-        // GET: ProductCatalogueController
-        public ActionResult Index()
+        private readonly IServiceProvider _serviceProvider;
+
+
+        public ProductCatalogueController(IServiceProvider serviceProvider)
         {
-            return View();
+            _serviceProvider = serviceProvider;
         }
+        // GET: ProductCatalogueController
+
 
         // GET: ProductCatalogueController/Details/5
-        public ActionResult Details(int id)
+
+
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<ProductDTO>> GetProductDetail(int id)  //DTOs face the end user
         {
-            return View();
+            // dont need this since Controller is already scoped
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<NovicellAppDBContext>();
+
+                ProductEntity product = await context.Products.FindAsync(id);
+
+                if (product == null)
+                {
+                    return NotFound();
+                }
+
+                ProductDTO productDTO = new ProductDTO { Id = product.ProductId, Category = product.Category, Description = product.Description, Image = product.Image, Title = product.Title, Price = product.Price };
+
+                Console.WriteLine(productDTO);
+
+                return Ok(productDTO);
+
+            }
         }
 
-        public async Task<ActionResult<ProductDTO>> GetProductDetail(string id)  //DTOs face the end user
+
+        public async Task<ActionResult<List<ProductDTO>>> GetPaginatedProducts(int pageNumber, int pageSize)
         {
-            //get data from a database setup in entity framework
-            throw new NotImplementedException();
-        }
+            if (pageNumber < 1 )
+            {
+                pageNumber = 1;
+            }
+
+            if (pageSize < 1)
+            {
+                pageSize = 10;
+            }
+
+            using (var scope = _serviceProvider.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<NovicellAppDBContext>();
+
+                List<ProductDTO> paginatedProducts = new List<ProductDTO>();
+
+                List<ProductEntity> products = await context.Products.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+                
+
+                if (products == null)
+                {
+                    return NotFound();
+                }
+
+                //converting productEnitities to productDTOs this way seems slow
+                for (int i = 0; i < products.Count; i++)
+                {
+                    ProductDTO productDTO = new ProductDTO { Id = products[i].ProductId, Category = products[i].Category, Description = products[i].Description, Image = products[i].Image, Title = products[i].Title, Price = products[i].Price };
+                    paginatedProducts.Add(productDTO);
+                }
+
+                return Ok(paginatedProducts);
+
+            }
+
+        }  
+        //DTOs face the end user
 
         public async Task<ActionResult<ProductDTO[]>> GetProductList(string id)
         {
             throw new NotImplementedException();
         }
 
-
-        // GET: ProductCatalogueController/Create
-        /*public ActionResult Create()
-        {
-            return View();
-        }
-        */
-        // POST: ProductCatalogueController/Create
-        
-        /*[HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }*/
-
-        // GET: ProductCatalogueController/Edit/5
-        /*public ActionResult Edit(int id)
-        {
-            return View();
-        }
-        */
-
-
-        // POST: ProductCatalogueController/Edit/5
-        /*[HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-        */
-        // GET: ProductCatalogueController/Delete/5
-        /*public ActionResult Delete(int id)
-        {
-            return View();
-        }
-        */
-        // POST: ProductCatalogueController/Delete/5
-        
-        /*[HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }*/
     }
 }

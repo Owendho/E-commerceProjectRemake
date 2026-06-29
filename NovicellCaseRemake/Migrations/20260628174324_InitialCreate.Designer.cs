@@ -11,7 +11,7 @@ using NovicellCaseRemake;
 namespace NovicellCaseRemake.Migrations
 {
     [DbContext(typeof(NovicellAppDBContext))]
-    [Migration("20260619201100_InitialCreate")]
+    [Migration("20260628174324_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
