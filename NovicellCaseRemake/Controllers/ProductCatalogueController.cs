@@ -20,13 +20,9 @@ namespace NovicellCaseRemake.Controllers
         {
             _serviceProvider = serviceProvider;
         }
-        // GET: ProductCatalogueController
 
 
-        // GET: ProductCatalogueController/Details/5
-
-
-        [HttpGet("{id:int}")]
+        [HttpGet("{id:int}")] //change Routes to something else. figure URI best practices
         public async Task<ActionResult<ProductDTO>> GetProductDetail(int id)  //DTOs face the end user
         {
             // dont need this since Controller is already scoped
@@ -50,18 +46,14 @@ namespace NovicellCaseRemake.Controllers
             }
         }
 
-
+        [HttpGet("{pageNumber:int},{pagesize:int}")] //not sure about this route
         public async Task<ActionResult<List<ProductDTO>>> GetPaginatedProducts(int pageNumber, int pageSize)
         {
             if (pageNumber < 1 )
-            {
                 pageNumber = 1;
-            }
 
             if (pageSize < 1)
-            {
                 pageSize = 10;
-            }
 
             using (var scope = _serviceProvider.CreateScope())
             {
@@ -70,8 +62,6 @@ namespace NovicellCaseRemake.Controllers
                 List<ProductDTO> paginatedProducts = new List<ProductDTO>();
 
                 List<ProductEntity> products = await context.Products.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
-
-                
 
                 if (products == null)
                 {
@@ -86,16 +76,12 @@ namespace NovicellCaseRemake.Controllers
                 }
 
                 return Ok(paginatedProducts);
-
             }
-
         }  
         //DTOs face the end user
-
         public async Task<ActionResult<ProductDTO[]>> GetProductList(string id)
         {
             throw new NotImplementedException();
         }
-
     }
 }
