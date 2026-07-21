@@ -46,7 +46,7 @@ namespace NovicellCaseRemake.Controllers
             }
         }
 
-        [HttpGet("{pageNumber:int},{pagesize:int}")] //not sure about this route
+        [HttpGet("{pageNumber:int}/{pagesize:int}")]
         public async Task<ActionResult<List<ProductDTO>>> GetPaginatedProducts(int pageNumber, int pageSize)
         {
             if (pageNumber < 1 )

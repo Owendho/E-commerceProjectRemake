@@ -21,9 +21,16 @@ builder.Services.AddHttpClient("ERPClient", client =>
     //client.DefaultRequestHeaders.Add("Accept", "application/vnd.github.v3+json");
 });
 
-builder.Services.AddHostedService<ERPData>();
+builder.Services.AddHostedService<ERPData>(); //singleton.
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp", policy => policy.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader());
+}); 
 
 var app = builder.Build();
+
+app.UseCors("AllowReactApp");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
