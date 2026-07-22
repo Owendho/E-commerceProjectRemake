@@ -11,7 +11,7 @@ namespace NovicellCaseRemake.Controllers
     //Is this class a singleton?
     [ApiController]
     [Route("[controller]")]
-    public class ProductCatalogueController : ControllerBase, IProductCatalogueController //do i need view support. Make interface for the require methods
+    public class ProductCatalogueController : ControllerBase, IProductCatalogueController //Make interface for the required methods
     {
         private readonly IServiceProvider _serviceProvider;
 
@@ -61,7 +61,7 @@ namespace NovicellCaseRemake.Controllers
 
                 List<ProductDTO> paginatedProducts = new List<ProductDTO>();
 
-                List<ProductEntity> products = await context.Products.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+                List<ProductEntity> products = await context.Products.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync(); //pagination logic
 
                 if (products == null)
                 {

@@ -4,6 +4,7 @@ namespace NovicellCaseRemake.Entities
 {
     public class ProductEntity
     {
+        //do i need validation here is ProductDTO has validation?
         public int Id { get; set; }
         public required string ProductId { get; set; }
         public required string Category { get; set; }
