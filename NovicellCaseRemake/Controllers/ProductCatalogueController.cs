@@ -23,21 +23,21 @@ namespace NovicellCaseRemake.Controllers
 
 
         [HttpGet("{id:int}")] //change Routes to something else. figure URI best practices
-        public async Task<ActionResult<ProductDTO>> GetProductDetail(int id)  //DTOs face the end user
+        public async Task<ActionResult<ProductDTO>> GetProductDetail(int id) //method runs in O(n) time  //DTOs face the end user
         {
             // dont need this since Controller is already scoped
-            using (var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateScope()) //assuming this is constant time
             {
-                var context = scope.ServiceProvider.GetRequiredService<NovicellAppDBContext>();
+                var context = scope.ServiceProvider.GetRequiredService<NovicellAppDBContext>(); //Don't know the run time of this. assuming it is constant time. c
 
-                ProductEntity product = await context.Products.FindAsync(id);
+                ProductEntity product = await context.Products.FindAsync(id); ////Don't know the run time of this.  assuming it runs on n time
 
-                if (product == null)
+                if (product == null) //c
                 {
-                    return NotFound();
+                    return NotFound(); //c
                 }
 
-                ProductDTO productDTO = new ProductDTO { Id = product.ProductId, Category = product.Category, Description = product.Description, Image = product.Image, Title = product.Title, Price = product.Price };
+                ProductDTO productDTO = new ProductDTO { Id = product.ProductId, Category = product.Category, Description = product.Description, Image = product.Image, Title = product.Title, Price = product.Price }; //c
 
                 Console.WriteLine(productDTO);
 
@@ -47,7 +47,7 @@ namespace NovicellCaseRemake.Controllers
         }
 
         [HttpGet("{pageNumber:int}/{pagesize:int}")]
-        public async Task<ActionResult<List<ProductDTO>>> GetPaginatedProducts(int pageNumber, int pageSize)
+        public async Task<ActionResult<List<ProductDTO>>> GetPaginatedProducts(int pageNumber, int pageSize) //O(n)
         {
             if (pageNumber < 1 )
                 pageNumber = 1;
@@ -59,9 +59,9 @@ namespace NovicellCaseRemake.Controllers
             {
                 var context = scope.ServiceProvider.GetRequiredService<NovicellAppDBContext>();
 
-                List<ProductDTO> paginatedProducts = new List<ProductDTO>();
+                List<ProductDTO> paginatedProducts = new List<ProductDTO>(); // c
 
-                List<ProductEntity> products = await context.Products.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync(); //pagination logic
+                List<ProductEntity> products = await context.Products.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync(); //Skip() runs on n time, Take runs on n and ToListAsync runs on n //pagination logic
 
                 if (products == null)
                 {
@@ -69,7 +69,7 @@ namespace NovicellCaseRemake.Controllers
                 }
 
                 //converting productEnitities to productDTOs this way seems slow
-                for (int i = 0; i < products.Count; i++)
+                for (int i = 0; i < products.Count; i++) //n
                 {
                     ProductDTO productDTO = new ProductDTO { Id = products[i].ProductId, Category = products[i].Category, Description = products[i].Description, Image = products[i].Image, Title = products[i].Title, Price = products[i].Price };
                     paginatedProducts.Add(productDTO);
