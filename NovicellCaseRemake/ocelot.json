@@ -1,0 +1,7 @@
+{
+  "Routes": [], // required section
+  "DynamicRoutes": [], // optional section
+  "GlobalConfiguration": { // required
+    "BaseUrl": "https://api.mybusiness.com"
+  }
+}

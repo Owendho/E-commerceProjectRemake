@@ -1,7 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using NovicellCaseRemake;
 
+using Ocelot.DependencyInjection;
+using Ocelot.Middleware;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.SetBasePath(builder.Environment.ContentRootPath).AddOcelot();
+builder.Services.AddOcelot(builder.Configuration);
 
 // Add services to the container.
 
@@ -43,5 +49,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+await app.UseOcelot();
 
 app.Run();
